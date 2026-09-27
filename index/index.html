@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>智答星途 · 智能问答 星途相伴</title>
+<meta name="description" content="智答星途是一套覆盖管理端、学生端、家长端的智慧教学平台：AI 答疑与智能出卷、在线考试与自动判分、投屏讲解、学习时长追踪、数据导出与图表分析、秒级通知推送。">
+<meta name="theme-color" content="#04060F">
+<meta property="og:title" content="智答星途 · 智能问答 星途相伴">
+<meta property="og:description" content="AI 驱动的智慧教学平台 · 管理端 / 学生端 / 家长端 三端协同">
+<meta property="og:image" content="assets/img/cover.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/cover.jpg">
+<link rel="apple-touch-icon" href="assets/img/cover.jpg">
+<!-- 毛笔字体子集（首屏主标题用，预加载避免字体切换闪烁） -->
+<link rel="preload" href="assets/fonts/mashanzheng-subset.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/liujianmaocao-subset.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="bg-starfield" aria-hidden="true"></div>
+<div class="bg-aurora" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
+
+<!-- ================= 桌面端导航 ================= -->
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top">
+      <img class="brand__mark" src="assets/img/cover.jpg" alt="智答星途" width="38" height="38">
+      <span class="brand__tx"><span class="ink">智答星途</span><em>V1.5.9</em></span>
+    </a>
+
+    <nav class="nav__links" id="navLinks">
+      <a href="#caps">核心能力</a>
+      <a href="#matrix">功能总览</a>
+      <a href="#roles">三端协同</a>
+      <a href="#ipad">iPad 版</a>
+      <a href="#demo">在线体验</a>
+      <a href="#tech">技术架构</a>
+      <a href="#disclaimer">免责声明</a>
+      <span class="nav__ink" id="navInk"></span>
+    </nav>
+
+    <a class="btn btn--sm" href="zdxt.apk" download="zdxt.apk">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>
+      下载 App
+    </a>
+
+    <button class="nav__burger" id="burger" aria-label="展开导航">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= 移动端顶条 ================= -->
+<header class="mtop" id="mtop">
+  <img class="mtop__logo" src="assets/img/cover.jpg" alt="智答星途" width="30" height="30">
+  <div class="mtop__tx">
+    <b>智答星途</b>
+    <span id="mtopSec">核心能力</span>
+  </div>
+  <a class="mtop__dl" href="zdxt.apk" download="zdxt.apk">下载</a>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="hero">
+
+    <!-- 竖排草书题字（装饰 · 仅大屏） -->
+    <div class="hero__mark" aria-hidden="true">
+      <span class="hero__mark__tx">星途相伴</span>
+      <span class="hero__mark__seal">星</span>
+    </div>
+
+    <!-- 桌面：左文案 + 右装置 -->
+    <div class="wrap hero__desk">
+      <div class="hero__copy">
+        <span class="pill"><i class="dot"></i> V1.5.9 · Android 正式版 · 免费下载</span>
+        <h1 class="hero__h1 ink"><span class="ik">智</span><span class="ik">答</span><span class="ik ik-g">星</span><span class="ik ik-g">途</span></h1>
+        <p class="hero__slogan">智能问答 · 星途相伴</p>
+        <p class="hero__desc">
+          一套贯通 <b>管理端 · 学生端 · 家长端</b> 的智慧教学平台。
+          AI 答疑与智能出卷、在线答题与自动判分、投屏讲解、学习时长追踪、数据导出与图表分析、秒级通知推送 ——
+          从命题、作答到讲评复盘，全链路一次打通。
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--lg" href="zdxt.apk" download="zdxt.apk">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>
+            下载 Android 安装包
+          </a>
+          <a class="btn btn--ghost btn--lg" href="#demo">先看在线演示</a>
+        </div>
+        <ul class="hero__meta">
+          <li><b>46.8 MB</b><span>安装包大小</span></li>
+          <li><b>Android 9.0+</b><span>系统要求</span></li>
+          <li><b>无账号</b><span>即可体验演示</span></li>
+        </ul>
+      </div>
+
+      <div class="hero__stage">
+        <div class="stage">
+          <span class="stage__ring"></span>
+          <span class="stage__halo"></span>
+          <span class="stage__halo stage__halo--2"></span>
+          <img class="stage__icon" src="assets/img/cover.jpg" alt="智答星途 App 封面" width="300" height="300">
+
+          <div class="float float--nav">
+            <b>考试</b><span>学习</span><span>通知</span><span>我的</span>
+            <i>AI</i>
+          </div>
+
+          <div class="float float--ai">AI<i>随时唤起</i></div>
+
+          <div class="float float--card">
+            <div class="k">本次得分</div>
+            <div class="v">92 <small>/ 100</small></div>
+            <div class="bar"><i></i></div>
+          </div>
+
+          <div class="float float--notify">
+            <span class="ring">🔔</span>
+            <span>期中测评已开放</span>
+          </div>
+
+          <div class="float float--sign">
+            <div class="k">今日签到率</div>
+            <div class="v">91%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 移动：封面沉浸 + 叠层 -->
+    <div class="hero__mob">
+      <img class="herom__cover" src="assets/img/cover.jpg" alt="智答星途 封面">
+      <div class="herom__veil"></div>
+      <div class="herom__in">
+        <span class="pill pill--sm"><i class="dot"></i> V1.5.9 · Android</span>
+        <h1 class="herom__h1 ink"><span class="ik">智</span><span class="ik">答</span><span class="ik">星</span><span class="ik">途</span></h1>
+        <p class="herom__slogan">智能问答 · 星途相伴</p>
+        <p class="herom__desc">管理端 · 学生端 · 家长端<br>一套系统打通教学全链路</p>
+        <div class="herom__cta">
+          <a class="btn btn--lg" href="zdxt.apk" download="zdxt.apk">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>
+            免费下载
+          </a>
+          <a class="btn btn--ghost btn--lg" href="#demo">在线体验</a>
+        </div>
+      </div>
+      <div class="herom__fade"></div>
+    </div>
+  </section>
+
+  <!-- ================= 数据带 ================= -->
+  <section class="stats">
+    <div class="wrap stats__in">
+      <div class="stat"><b>3</b><span>端角色协同</span></div>
+      <div class="stat"><b>30<small>+</small></b><span>项功能模块</span></div>
+      <div class="stat"><b>4</b><span>大题型 · 自动判分</span></div>
+      <div class="stat"><b>2</b><span>个 AI 模型</span></div>
+      <div class="stat"><b>&lt;1s</b><span>通知实时触达</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 核心能力 ================= -->
+  <section class="caps" id="caps">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="sec-tag">核心能力</span>
+        <h2>把教与学，<span class="ink">交给一套系统</span></h2>
+        <p>从命题出卷、学生作答，到投屏讲评、数据回流 —— 每个环节都内置了 AI 能力。</p>
+      </header>
+    </div>
+
+    <!-- 桌面：Bento 网格 -->
+    <div class="wrap bento reveal" id="bento"></div>
+
+    <!-- 移动：横向 swipe -->
+    <div class="swipe" id="swipe"></div>
+    <div class="swipe__dots" id="swipeDots"></div>
+  </section>
+
+  <!-- ================= 完整功能总览 ================= -->
+  <section class="matrix" id="matrix">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="sec-tag">功能总览</span>
+        <h2>每一项，都能<span class="ink">点开看细节</span></h2>
+        <p>下面这份清单按客户端源码逐页整理。切换角色可以查看各端完整的功能矩阵。</p>
+      </header>
+
+      <div class="role-seg reveal" id="matrixSeg"></div>
+
+      <!-- 桌面：多列清单 -->
+      <div class="mx-desk reveal" id="mxDesk"></div>
+
+      <!-- 移动：手风琴 -->
+      <div class="mx-mob reveal" id="mxMob"></div>
+    </div>
+  </section>
+
+  <!-- ================= 三端协同 ================= -->
+  <section class="roles" id="roles">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="sec-tag">三端协同</span>
+        <h2>一个平台，<span class="ink">三种视角</span></h2>
+        <p>同一份数据，按角色分发。老师看全局，学生看自己，家长看孩子。</p>
+      </header>
+      <div class="roles__grid reveal" id="rolesGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= 在线体验 ================= -->
+  <section class="demo" id="demo">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="sec-tag">在线体验</span>
+        <h2>不用安装，<span class="ink">先上手玩一遍</span></h2>
+        <p class="demo__lead">这台手机是按客户端真实结构 1:1 手写的交互原型 —— AI 能真打字提问、试卷能真作答、还能一路点到投屏讲解与数据导出。</p>
+      </header>
+
+      <div class="demo__grid">
+        <!-- 手机 -->
+        <div class="phone reveal" id="phone">
+          <div class="phone__shell">
+            <div class="phone__screen">
+              <div class="notch" aria-hidden="true"></div>
+              <div class="statusbar sb-light" id="dstatusbar">
+                <span id="dclock">9:41</span>
+                <span class="statusbar__right"><i></i><em></em></span>
+              </div>
+              <div class="screens" id="dscreens"></div>
+              <div class="homebar" id="dhomebar"></div>
+            </div>
+          </div>
+          <div class="phone__hint">点开屏幕里的任意按钮试试</div>
+        </div>
+
+        <!-- 桌面右侧：角色切换 + 功能清单联动 -->
+        <div class="demo__panel reveal" id="demoPanel"></div>
+
+        <!-- 移动：全屏体验按钮 -->
+        <div class="demo__mob reveal" id="demoMob"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 技术架构 ================= -->
+  <section class="tech" id="tech">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="sec-tag">技术架构</span>
+        <h2>看得见的体验，<span class="ink">看不见的功课</span></h2>
+        <p>移动端用 Flutter 一套代码覆盖 Android 与 Web，把稳定性与观感都做到位。</p>
+      </header>
+      <div class="tech__grid reveal" id="techGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= 下载 ================= -->
+  <section class="dl" id="download">
+    <div class="wrap">
+      <div class="dl__box reveal">
+        <div class="dl__copy">
+          <h2>现在就把智答星途<br><span class="ink">装进手机</span></h2>
+          <p>下载 Android 安装包，安装后使用学校或机构分配的账号登录即可（安装时提示未备案是正常现象，授权安装即可）。首次启动需阅读并同意用户声明（需停留 10 秒并滑至底部）。</p>
+
+          <div class="dl__info">
+            <span>文件名 <b>zdxt.apk</b></span>
+            <span>大小 <b>46.8 MB</b></span>
+            <span>版本 <b>V1.5.9</b></span>
+            <span>系统 <b>Android 9.0+</b></span>
+          </div>
+        </div>
+
+        <div class="dl__act">
+          <img class="dl__icon" src="assets/img/cover.jpg" alt="智答星途" width="126" height="126">
+          <a class="btn btn--lg" href="zdxt.apk" download="zdxt.apk">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>
+            立即下载安装包
+          </a>
+          <p class="dl__sha">若浏览器提示风险，请在设置中允许「未知来源应用」安装</p>
+        </div>
+      </div>
+
+      <div class="dl__box dl__box--ipad reveal">
+        <div class="dl__copy">
+          <span class="dl__badge">平板大屏 · 独立考试端</span>
+          <h2><span class="ink">智答星途</span> <em>iPad 考试版</em></h2>
+          <p>专为平板大屏打造的独立考试客户端。左右分栏布局、内置完整答题卡、LaTeX 公式渲染，与手机端共用同一套账号、试卷与成绩数据。</p>
+
+          <div class="dl__info">
+            <span>文件名 <b>ipadzdxt.apk</b></span>
+            <span>大小 <b>20.3 MB</b></span>
+            <span>版本 <b>V1.5.9</b></span>
+            <span>系统 <b>Android 9.0+</b></span>
+          </div>
+        </div>
+
+        <div class="dl__act">
+          <img class="dl__icon dl__icon--ipad" src="assets/img/ipad-cover.png" alt="智答星途 iPad 考试版" width="126" height="126">
+          <a class="btn btn--lg" href="#ipad">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            查看 iPad 版介绍
+          </a>
+          <p class="dl__sha"><a class="dl__direct" href="ipadzdxt.apk" download="ipadzdxt.apk">直接下载 apk</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 免责声明 ================= -->
+  <section class="disc" id="disclaimer">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-tag">合规声明</span>
+        <h2><span class="ink">免责声明</span></h2>
+        <p>本应用面向机构内部教学场景。请在下载与使用前仔细阅读以下条款，安装并使用即视为已知悉并同意全部内容。</p>
+      </div>
+
+      <div class="disc__box reveal">
+        <ol class="disc__list">
+          <li>
+            <b>01</b>
+            <p>本应用仅限指定机构授权用户使用，<em>严禁出借、转让、售卖账号与密码</em>。一经查实，平台将立即收回应用使用权限并<em>永久封禁账号</em>。</p>
+          </li>
+          <li>
+            <b>02</b>
+            <p>因账号转借、中介倒卖、主动泄露账号密码所产生的全部后果与损失，<em>均由账号持有人自行承担</em>，本平台不承担任何相关责任。</p>
+          </li>
+          <li>
+            <b>03</b>
+            <p>如不慎无意泄露账号、密码，请通过官方渠道联系你所在机构或群组管理员，申请密码重置或账号注销换新，规避账号风险。<em>否则由你承担泄露责任！</em></p>
+          </li>
+          <li>
+            <b>04</b>
+            <p>用户使用本应用产生的学习记录、答题数据等内容，由用户妥善保管，平台仅按机构要求存储数据，不承担数据外泄以外的衍生损失。</p>
+          </li>
+          <li>
+            <b>05</b>
+            <p><em>禁止利用本应用从事违规、违法活动</em>，一旦发现违规行为，平台有权直接封禁账号并保留追究相关责任的权利。</p>
+          </li>
+        </ol>
+
+        <p class="disc__note">账号安全由持有人自行负责 · 如需申诉或重置密码，请联系你所在机构或群组管理员</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= Footer ================= -->
+<footer class="foot-wrap">
+  <div class="wrap foot">
+    <div class="foot__brand">
+      <img src="assets/img/cover.jpg" alt="智答星途" width="34" height="34">
+      <div>
+        <b>智答星途</b>
+        <span>智能问答 · 星途相伴</span>
+      </div>
+    </div>
+
+    <nav class="foot__links">
+      <a href="#caps">核心能力</a>
+      <a href="#matrix">功能总览</a>
+      <a href="#roles">三端协同</a>
+      <a href="#demo">在线体验</a>
+      <a href="#tech">技术架构</a>
+      <a href="#disclaimer">免责声明</a>
+      <a href="#ipad">iPad 考试版</a>
+      <a href="zdxt.apk" download="zdxt.apk">下载 App</a>
+    </nav>
+
+    <div class="foot__copy">
+      <span>© 2026 智答星途 · ZdxtApp V1.5.9</span>
+      <span>本站为应用介绍页，界面演示基于真实客户端结构手绘还原，仅供预览</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= 移动端底部 Tab 栏 ================= -->
+<nav class="mtab" id="mtab">
+  <span class="mtab__ink" id="mtabInk"></span>
+  <button class="mtab__b is-on" data-to="caps"><i>✦</i><span>能力</span></button>
+  <button class="mtab__b" data-to="matrix"><i>☰</i><span>功能</span></button>
+  <button class="mtab__b" data-to="demo"><i>▢</i><span>体验</span></button>
+  <button class="mtab__b" data-to="download"><i>↓</i><span>下载</span></button>
+</nav>
+
+<!-- ================= 移动全屏体验抽屉 ================= -->
+<div class="fsdemo" id="fsdemo" aria-hidden="true">
+  <button class="fsdemo__fab" id="fsClose" aria-label="退出全屏体验" title="退出体验">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="fsdemo__hint" id="fsHint">按手机返回键退出体验，或点右上角 ✕</div>
+  <div class="fsdemo__body">
+    <div class="phone phone--fs" id="phoneFs">
+      <div class="phone__shell">
+        <div class="phone__screen">
+          <div class="notch" aria-hidden="true"></div>
+          <div class="statusbar sb-light" id="fstatusbar">
+            <span id="fclock">9:41</span>
+            <span class="statusbar__right"><i></i><em></em></span>
+          </div>
+          <div class="screens" id="fscreens"></div>
+          <div class="homebar" id="fhomebar"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fsdemo__side" id="fsSide"></div>
+  </div>
+</div>
+
+<!-- ================= iPad 考试版介绍页 ================= -->
+<div class="ipage" id="ipadPage" aria-hidden="true">
+  <header class="ipage__bar">
+    <div class="wrap ipage__barin">
+      <a class="ipage__back" href="#" id="ipadBack">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        返回官网
+      </a>
+      <div class="ipage__brand">
+        <img src="assets/img/ipad-cover.png" alt="智答星途 iPad 考试版" width="28" height="28">
+        <span>智答星途 · <b>iPad 考试版</b></span>
+      </div>
+      <a class="btn btn--sm" href="ipadzdxt.apk" download="ipadzdxt.apk">下载 APK</a>
+    </div>
+  </header>
+
+  <div class="ipage__body" id="ipadBody">
+
+    <!-- Hero -->
+    <section class="ihero">
+      <div class="wrap ihero__grid">
+        <div class="ihero__copy">
+          <span class="pill"><i class="dot"></i> V1.5.9 · 平板考试端 · 免费下载</span>
+          <h1 class="ihero__h1 ink"><span class="ik">智</span><span class="ik">答</span><span class="ik">星</span><span class="ik">途</span><em>iPad 考试版</em></h1>
+          <p class="ihero__slogan">大屏分栏 · 专为考场而生的独立考试端</p>
+          <p class="ihero__desc">
+            与手机端共用同一套账号、试卷与成绩数据，界面为平板大屏重新排布：<b>左右分栏</b>、内置完整<b>答题卡</b>、
+            <b>LaTeX 公式</b>原生渲染。也可用手机学生端<b>扫码登录</b>，试卷与成绩自动同步。
+          </p>
+          <div class="ihero__cta">
+            <a class="btn btn--lg" href="ipadzdxt.apk" download="ipadzdxt.apk">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>
+              下载 iPad 考试版
+            </a>
+            <a class="btn btn--ghost btn--lg" href="#exam-flow">查看功能详情</a>
+          </div>
+          <ul class="ihero__meta">
+            <li><b>20.3 MB</b><span>安装包大小</span></li>
+            <li><b>Android 9.0+</b><span>系统要求</span></li>
+            <li><b>V1.5.9</b><span>当前版本</span></li>
+          </ul>
+        </div>
+
+        <div class="ihero__stage">
+          <div class="tab">
+            <div class="tab__cam"></div>
+            <div class="tab__screen">
+              <div class="tab__top">
+                <span class="tab__t">八年级数学 · 期中测评</span>
+                <span class="tab__clock">总时 24:18</span>
+              </div>
+              <div class="tab__row">
+                <div class="tab__left">
+                  <div class="tab__lt">答题卡</div>
+                  <div class="tab__ln">12 / 20</div>
+                  <div class="tab__grp">单选题</div>
+                  <div class="tab__nos">
+                    <i class="is-on">1</i><i class="is-done">2</i><i class="is-done">3</i><i>4</i><i>5</i><i>6</i>
+                  </div>
+                  <div class="tab__grp">多选题</div>
+                  <div class="tab__nos">
+                    <i class="is-done">7</i><i>8</i><i>9</i>
+                  </div>
+                  <div class="tab__grp">填空题</div>
+                  <div class="tab__nos">
+                    <i>10</i><i>11</i>
+                  </div>
+                </div>
+                <div class="tab__right">
+                  <div class="tab__q">第 12 题 · 单选题 · 5 分</div>
+                  <div class="tab__stem">若 <b>x² − 5x + 6 = 0</b>，则 x 的值为（　）</div>
+                  <div class="tab__opts">
+                    <span>A. 1</span><span>B. 2</span><span class="is-sel">C. 2 或 3</span><span>D. 3</span>
+                  </div>
+                  <div class="tab__foot"><i>上一题</i><i class="is-pri">下一题</i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="ihero__cap">答题页 · 左侧答题卡 + 右侧题目区（1 : 2 分栏）</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 大屏适配 -->
+    <section class="isec wrap" id="ipad-layout">
+      <div class="sec-head">
+        <span class="sec-tag">大屏适配</span>
+        <h2>每一页都<span class="ink">为平板重排</span></h2>
+        <p>整套界面统一以「屏幕宽度 600」为界，自动切换平板与手机两套布局，横屏旋转与软键盘弹出均已适配。</p>
+      </div>
+      <div class="irows">
+        <div class="irow"><b>登录页</b><span>内容居中限宽，输入区与二维码按屏放大</span><i>居中</i></div>
+        <div class="irow"><b>试卷中心</b><span>左侧统计面板（总数 / 已完成 / 未完成）+ 右侧两列试卷网格</span><i>1 : 2</i></div>
+        <div class="irow"><b>答题页</b><span>左侧完整答题卡 + 右侧题干与选项</span><i>1 : 2</i></div>
+        <div class="irow"><b>答卷详情</b><span>左侧成绩面板 + 右侧逐题答卷与解析</span><i>1 : 2</i></div>
+        <div class="irow"><b>AI 助手</b><span>左侧对话区 + 右侧会话信息与快捷操作</span><i>2 : 1</i></div>
+      </div>
+    </section>
+
+    <!-- 考试与答题 -->
+    <section class="isec wrap" id="exam-flow">
+      <div class="sec-head">
+        <span class="sec-tag">考试与答题</span>
+        <h2>从试卷列表<span class="ink">到交卷</span></h2>
+      </div>
+      <div class="icards">
+        <article class="icard">
+          <div class="icard__ico icard__ico--blue">📋</div>
+          <h3>试卷中心</h3>
+          <ul>
+            <li>状态角标实时计算：<b>未开始</b> / <b>答题已开放</b> / <b>已结束</b>，灰绿红三色区分</li>
+            <li>卡片显示试卷名、科目、类型（自由 / 强制）、起止时间与计时方式</li>
+            <li>每 15 秒自动刷新列表，进入答题 / 详情 / AI 页自动暂停，返回即恢复</li>
+            <li>标为「强制」且已到开放时间的试卷，进入首页即自动跳转答题</li>
+            <li>下拉刷新；区分「加载失败，请下拉刷新重试」与「暂无试卷」两种空态</li>
+          </ul>
+        </article>
+
+        <article class="icard">
+          <div class="icard__ico icard__ico--violet">✍️</div>
+          <h3>答题页</h3>
+          <ul>
+            <li>支持 <b>单选 / 多选 / 填空 / 简答</b> 四种题型</li>
+            <li>两种计时：<b>总计时</b>（整卷倒计时）与<b>每题计时</b>（逐题倒计时，可按题配置）</li>
+            <li>到时自动交卷；每题计时模式下自动进入下一题，最后一题自动交卷</li>
+            <li>答题卡按题型分组，题号格三色标识：当前题蓝、已答绿、未答灰</li>
+            <li>总计时可自由跳题；每题计时只能顺序推进，回看已答题进入只读并提示「此题已作答，仅可查看」</li>
+            <li>离开页面立即停止计时；多选题提交前自动排序归档</li>
+          </ul>
+        </article>
+
+        <article class="icard">
+          <div class="icard__ico icard__ico--mint">🏆</div>
+          <h3>成绩与解析</h3>
+          <ul>
+            <li>总得分与满分对照展示</li>
+            <li>按单选 / 多选 / 填空 / 简答四类分别统计得分</li>
+            <li>逐题呈现<b>我的答案</b>、<b>标准答案</b>与<b>解析</b></li>
+            <li>对照着色：标准答案绿色，选错橙色，一眼看出差异</li>
+            <li>每题可一键「问 AI」，自动带上题干、题型、选项、标准答案与我的答案</li>
+          </ul>
+        </article>
+
+        <article class="icard">
+          <div class="icard__ico icard__ico--cyan">∑</div>
+          <h3>公式与配图</h3>
+          <ul>
+            <li>题干、选项、解析全部支持 <b>LaTeX 公式</b>原生渲染</li>
+            <li>兼容 <code>$…$</code> 行内、<code>$$…$$</code> 块级、<code>\(…\)</code> 与 <code>\[…\]</code> 多种写法</li>
+            <li>自动还原 HTML 实体与 Unicode 转义、修复断裂的 LaTeX 反斜杠、补齐未闭合花括号</li>
+            <li>题目可附带配图，自动适配卡片宽度</li>
+            <li>公式渲染失败时回退显示原始 LaTeX 文本，便于排查</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- AI 助手 -->
+    <section class="isec wrap" id="ipad-ai">
+      <div class="iai">
+        <div class="iai__copy">
+          <span class="sec-tag">AI 解题助手</span>
+          <h2>看不懂的题，<span class="ink">直接问</span></h2>
+          <p>接入智谱 <b>GLM-4-Flash</b>，以流式方式逐字返回解题过程，公式强制使用标准 LaTeX 输出，与客户端渲染器无缝衔接。</p>
+          <ul class="ichecks">
+            <li>流式打字机效果，边算边显示</li>
+            <li>每条消息可复制、可重新生成</li>
+            <li>聊天记录保存在本机，最多保留 200 条</li>
+            <li>清空记录需二次确认</li>
+            <li>答卷详情页可对单题一键提问，自动拼接题目上下文</li>
+          </ul>
+        </div>
+        <div class="iai__demo">
+          <div class="chat">
+            <div class="chat__msg chat__msg--me">这道题的判别式怎么算？</div>
+            <div class="chat__msg chat__msg--ai">
+              对 x<sup>2</sup> − 5x + 6 = 0，判别式为<br>
+              Δ = b<sup>2</sup> − 4ac = 25 − 24 = 1<br>
+              因为 Δ &gt; 0，方程有两个不相等的实根。
+            </div>
+            <div class="chat__msg chat__msg--ai chat__msg--typing">正在解答…<i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 登录与账号 -->
+    <section class="isec wrap" id="ipad-login">
+      <div class="sec-head">
+        <span class="sec-tag">登录与账号</span>
+        <h2>两种方式<span class="ink">进考场</span></h2>
+      </div>
+      <div class="icards icards--3">
+        <article class="icard icard--sm">
+          <div class="icard__ico icard__ico--blue">👤</div>
+          <h3>账号密码登录</h3>
+          <p>使用学校或机构分配的账号密码登录，密码支持明文切换查看；请求超时 10 秒，异常有明确中文提示。</p>
+        </article>
+        <article class="icard icard--sm">
+          <div class="icard__ico icard__ico--violet">📱</div>
+          <h3>扫码登录</h3>
+          <p>平板展示二维码，用<b>手机学生端</b>扫码授权即可登录，无需在平板上输入密码；二维码 2 秒轮询一次，过期可一键刷新。</p>
+        </article>
+        <article class="icard icard--sm">
+          <div class="icard__ico icard__ico--mint">⚙️</div>
+          <h3>个人面板</h3>
+          <p>内置修改密码、用户声明与退出登录；面板 15 秒无操作自动收起，避免考场误触。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 下载 -->
+    <section class="idl wrap" id="ipad-download">
+      <div class="idl__box">
+        <div class="idl__copy">
+          <span class="pill"><i class="dot"></i> Android 9.0+ · 平板 / 大屏设备</span>
+          <h2>下载 iPad <span class="ink">考试版</span></h2>
+          <p>下载安装包后，用学校或机构分配的账号登录即可（安装时提示未备案是正常现象，授权安装即可）。若需在平板上扫码登录，请先在手机端安装智答星途学生端。</p>
+          <div class="idl__info">
+            <span>文件名 <b>ipadzdxt.apk</b></span>
+            <span>大小 <b>20.3 MB</b></span>
+            <span>版本 <b>V1.5.9</b></span>
+            <span>系统 <b>Android 9.0+</b></span>
+          </div>
+        </div>
+        <div class="idl__act">
+          <img class="idl__icon" src="assets/img/ipad-cover.png" alt="智答星途 iPad 考试版" width="118" height="118">
+          <a class="btn btn--lg" href="ipadzdxt.apk" download="ipadzdxt.apk">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>
+            立即下载安装包
+          </a>
+          <p class="dl__sha">若浏览器提示风险，请在设置中允许「未知来源应用」安装</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="ifoot">
+      <div class="wrap ifoot__in">
+        <span>© 2026 智答星途 · iPad 考试版 V1.5.9</span>
+        <span>介绍页；界面示意图为按真实客户端结构手绘还原，仅供预览</span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
