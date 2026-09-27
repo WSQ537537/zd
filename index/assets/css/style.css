@@ -40,6 +40,13 @@
   --phone-w: 320px;
   --phone-h: 676px;
   --pad-b: env(safe-area-inset-bottom, 0px);
+
+  /* 底部悬浮栏（.mtab）几何。抽成变量的原因：它决定了「页面末尾至少要为它留多少空白」，
+     写成两处独立数字的话，以后调栏高就会和末尾留白脱节。 */
+  --mtab-h: 62px;     /* 栏高 */
+  --mtab-gap: 10px;   /* 离屏幕底边的距离 */
+  /* 悬浮栏自文档底部往上占据的高度（不含额外呼吸余量） */
+  --mtab-occupy: calc(var(--mtab-h) + var(--mtab-gap) + var(--pad-b));
 }
 
 * { box-sizing: border-box; }
@@ -347,24 +354,37 @@ main, .foot-wrap { position: relative; z-index: 1; }
    ============================================================ */
 .mtop, .mtab { display: none; }
 
-/* 顶条：内层可视高度固定 56px，刘海安全区在「外」叠加。
-   注意必须用 min-height —— 若写成 height:56px，padding-top 会从 56px 里
-   扣掉，刘海机型上内容被挤到框下方，出现「图标/名称/下载按钮整体下沉」。 */
+/* 顶条：可视高度固定 --mtop-h，紧贴屏幕顶部。
+   默认「不」叠加刘海安全区 —— 见下方 @supports 里的原因说明。 */
 .mtop {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 90;
-  height: auto;
-  min-height: calc(var(--mtop-h) + env(safe-area-inset-top, 0px));
+  height: var(--mtop-h);
   align-items: center;
   gap: 10px;
   padding: 0 14px;
-  padding-top: env(safe-area-inset-top, 0px);
   box-sizing: border-box;
   background: rgba(5, 7, 15, .84);
   backdrop-filter: blur(18px) saturate(150%);
   border-bottom: 1px solid var(--line);
   transition: transform .32s var(--ease), background .3s;
+}
+
+/* ⚠️ 刘海避让只在「真·iOS WebKit」启用（Safari / iOS 微信）。
+   它们是全屏沉浸式 WebView，页面直接铺到状态栏底下，必须自己留出安全区，
+   且这里必须用 min-height：写成 height 时 padding-top 会从定高里扣掉，
+   内容被挤到框下方（就是曾经的「图标/名称/下载按钮整体下沉」）。
+   安卓微信 X5 虽然也认 viewport-fit=cover、也把状态栏高度塞进 env(safe-area-inset-top)
+   （实测 35px），但它的 WebView 本身已把页面放在状态栏下方 —— 再叠加一次就是「双重留白」：
+   顶栏被撑到 91px、内容整体下移、页首多出一大片黑并挤压首屏。
+   -webkit-touch-callout 是 iOS WebKit 独有属性，安卓 / 桌面 Chrome 均不命中。 */
+@supports (-webkit-touch-callout: none) {
+  .mtop {
+    height: auto;
+    min-height: calc(var(--mtop-h) + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+  }
 }
 .mtop.hide { transform: translateY(-100%); }
 .mtop__logo {
@@ -405,11 +425,11 @@ main, .foot-wrap { position: relative; z-index: 1; }
 .mtab {
   position: fixed;
   left: 10px; right: 10px;
-  bottom: calc(10px + var(--pad-b));
+  bottom: calc(var(--mtab-gap) + var(--pad-b));
   z-index: 92;
   grid-template-columns: repeat(4, 1fr);
   align-items: stretch;
-  height: 62px;
+  height: var(--mtab-h);
   padding: 5px;
   border-radius: 26px;
   background: rgba(14, 20, 36, .74);
@@ -2639,10 +2659,14 @@ main, .foot-wrap { position: relative; z-index: 1; }
 @media (max-width: 980px) {
   :root {
     --wrap: 100%;
-    --mtop-h: 56px;          /* 顶条可视高度（安全区另行叠加） */
-    --nav-h: calc(56px + env(safe-area-inset-top, 0px));
+    --mtop-h: 56px;          /* 顶条可视高度（刘海安全区只在 iOS 另行叠加，见 .mtop 的 @supports） */
+    --nav-h: var(--mtop-h);  /* 与顶条实际高度一致；JS syncNavHeight() 会按实测值再校准 */
     --phone-w: 300px;
     --phone-h: 634px;
+  }
+  /* iOS 全屏 WebView 下顶条会自己长高，--nav-h 的默认值同步跟上，避免首帧内容被压 */
+  @supports (-webkit-touch-callout: none) {
+    :root { --nav-h: calc(var(--mtop-h) + env(safe-area-inset-top, 0px)); }
   }
 
   /* 布局切换：桌面隐，移动显 */
@@ -2692,8 +2716,16 @@ main, .foot-wrap { position: relative; z-index: 1; }
   .sec-head { margin-bottom: 34px; }
   .sec-head p { font-size: 14.5px; }
 
-  /* 底部为固定 Tab 栏与吸底 CTA 留出空间 */
-  .foot { padding-bottom: calc(104px + var(--pad-b)); }
+  /* 页面末尾为底部固定 Tab 栏留白：栏体自文档底往上占 --mtab-occupy，
+     再留 40px 呼吸，滚到底时末尾两三行才能完整露在栏体上方，不被压住。
+     ⚠️ 必须写成 .foot.wrap（不能只写 .foot）：页脚是 <div class="wrap foot">，同时命中两个类，
+        而 ≤560px 的 .wrap{padding:0 18px} 排在 .foot 基础规则之后，同为 0-1-0 特异性、后者胜出，
+        会把页脚的 padding 整体清成 0（连基础规则的 padding-top:40px 一起失效）。
+        桌面端 .wrap 排在更前面所以一直正常，只有手机端踩这个坑。 */
+  .foot.wrap {
+    padding-top: 34px;
+    padding-bottom: calc(var(--mtab-occupy) + 40px);
+  }
   .dl { padding-bottom: 88px; }
 
   .disc { padding: 0 0 88px; }

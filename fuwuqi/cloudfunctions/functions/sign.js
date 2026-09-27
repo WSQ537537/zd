@@ -316,10 +316,9 @@ function getBigScreenHtml() {
   .tag{
     background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
     padding:12px 18px;border-radius:14px;font-size:24px;line-height:1;color:#eef1ff;
-    animation:pop .28s ease both;transition:transform .18s ease, background .18s ease;
+    transition:transform .18s ease, background .18s ease;
   }
   .tag:hover{transform:translateY(-3px);background:rgba(255,255,255,0.14)}
-  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
   @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
   .btn-group{position:fixed;bottom:36px;right:40px;z-index:5;display:flex;gap:18px}
