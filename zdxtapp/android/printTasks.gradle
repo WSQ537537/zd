@@ -1,0 +1,1 @@
+allprojects { afterEvaluate { project -> if (project.name == 'image_picker_android') { project.tasks.matching { it.name.contains('Compile') || it.name.contains('compile') }.each { println('t:' + it.name + ' ' + it.class); } } } }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark blue background color for launch screen (matching the app cover theme) -->
+    <color name="launch_background_color">#1a237e</color>
+	<color name="ic_launcher_background">#1a237e</color>
+</resources>
