@@ -2246,17 +2246,25 @@
       if (h > 0) root.style.setProperty('--nav-h', h + 'px');
     }
 
+    /* 触发点尽量铺开，不押注单一机制：
+       ResizeObserver 在个别环境/内核里对 fixed 元素只回调一次，不能作为唯一依靠。 */
     if (window.ResizeObserver) {
-      /* ⚠️ 必须持有 observer 引用：写成 new ResizeObserver(sync).observe(x)
-         时对象无人引用，可能被 GC 回收，回调静默失效（顶栏变高了但变量不更新）。 */
+      /* ⚠️ 必须持有 observer 引用，否则可能被 GC 回收、回调静默失效 */
       var ro = new ResizeObserver(sync);
       ro.observe(mtop);
       window.__zdxtNavRO = ro;
     }
     window.addEventListener('resize', sync, { passive: true });
     window.addEventListener('orientationchange', sync, { passive: true });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', sync, { passive: true });
+      window.visualViewport.addEventListener('scroll', sync, { passive: true });
+    }
     window.addEventListener('load', sync);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+    /* 首帧兜底：字体落位、封面图解码、浏览器工具栏稳定后各补一次 */
+    setTimeout(sync, 300);
+    setTimeout(sync, 1200);
     sync();
   }
 

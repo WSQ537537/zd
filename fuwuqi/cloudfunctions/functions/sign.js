@@ -222,39 +222,146 @@ function getBigScreenHtml() {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>签到大屏</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft YaHei,sans-serif}
-  body{background:#0B1223;color:#fff;height:100vh;overflow:hidden}
-  .wrap{display:flex;width:100%;height:100vh;padding:30px;gap:24px}
-  .left{width:40%;background:rgba(255,255,255,0.05);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
-  .empty{font-size:70px;color:#ffd700;font-weight:bold;text-align:center}
-  .subject-title{font-size:60px;color:#ffd700;font-weight:bold;margin-bottom:15px}
-  .title-text{font-size:42px;color:#ffd700;margin-bottom:25px}
-  .display-box{width:400px;height:400px;background:#ffffff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:80px;font-weight:bold;color:#ff0000}
-  .time{font-size:50px;color:#ffd700;font-weight:bold;margin-top:25px}
-  .right{width:60%;display:flex;flex-direction:column;gap:24px}
-  .box{flex:1;background:rgba(255,255,255,0.05);border-radius:24px;padding:30px}
-  .box h2{font-size:44px;margin-bottom:20px}
-  .green{color:#4ade80}
-  .red{color:#ff4444}
-  .names{font-size:30px;line-height:1.8;display:flex;flex-wrap:wrap;gap:12px}
-  .tag{background:rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px}
-  .btn-group{position:absolute;bottom:40px;right:40px;display:flex;gap:20px}
-  .end-btn{padding:20px 40px;background:#ff9800;color:#fff;border:none;border-radius:16px;font-size:24px;cursor:pointer}
-  .close-btn{padding:20px 40px;background:#ff4444;color:#fff;border:none;border-radius:16px;font-size:24px;cursor:pointer}
-</style>
+  <style>
+  :root{
+    --gold-1:#FFE9A8; --gold-2:#FFC247; --gold-3:#FF9D2F;
+    --green:#34d399; --red:#fb7185;
+    --glass:rgba(255,255,255,0.055);
+    --glass-brd:rgba(255,255,255,0.12);
+    --ink:#f5f7ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif}
+  html,body{height:100%}
+  body{
+    color:var(--ink);height:100vh;overflow:hidden;position:relative;
+    background:
+      radial-gradient(1100px 620px at 12% -8%, rgba(99,102,241,0.28), transparent 60%),
+      radial-gradient(1000px 560px at 108% 18%, rgba(236,72,153,0.20), transparent 55%),
+      radial-gradient(900px 520px at 50% 120%, rgba(45,212,191,0.14), transparent 60%),
+      linear-gradient(160deg,#070b18 0%, #0b1228 46%, #15123a 100%);
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(420px 420px at 20% 75%, rgba(255,193,71,0.10), transparent 70%),
+      radial-gradient(380px 380px at 85% 60%, rgba(168,85,247,0.10), transparent 70%);
+    animation:drift 18s ease-in-out infinite alternate;
+  }
+  @keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(30px,-20px,0)}}
+
+  .topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:22px 40px}
+  .brand{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;letter-spacing:1px}
+  .brand .logo{
+    width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+    background:linear-gradient(135deg,var(--gold-1),var(--gold-3));color:#3a2a00;
+    box-shadow:0 8px 22px rgba(255,170,40,0.35);
+  }
+  .brand small{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,0.45);letter-spacing:3px}
+  .live{font-size:15px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:9px}
+  .live .pulse{width:10px;height:10px;border-radius:50%;background:var(--green);animation:beat 2s infinite}
+
+  .wrap{position:relative;z-index:1;display:flex;width:100%;height:calc(100vh - 88px);padding:0 40px 30px;gap:28px}
+  .left{
+    width:42%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:var(--glass);border:1px solid var(--glass-brd);border-radius:30px;padding:46px;
+    backdrop-filter:blur(18px);box-shadow:0 30px 70px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.08);
+    position:relative;overflow:hidden;animation:rise .55s ease both;
+  }
+  .left::after{content:"";position:absolute;top:-40%;left:-10%;width:60%;height:120%;
+    background:linear-gradient(180deg,rgba(255,200,80,0.10),transparent);filter:blur(20px)}
+
+  .empty{font-size:60px;font-weight:800;color:rgba(255,255,255,0.82);text-align:center;line-height:1.3;
+    display:flex;flex-direction:column;align-items:center;gap:18px}
+  .empty .ico{font-size:86px;animation:beat 2.4s infinite}
+  @keyframes beat{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.55);opacity:1}70%{box-shadow:0 0 0 14px rgba(52,211,153,0);opacity:.6}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);opacity:1}}
+
+  .subject-title{
+    font-size:58px;font-weight:800;line-height:1.14;text-align:center;margin-bottom:10px;
+    background:linear-gradient(135deg,var(--gold-1),var(--gold-2) 55%,var(--gold-3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 6px 40px rgba(255,180,60,0.22);
+  }
+  .title-text{font-size:32px;color:rgba(255,255,255,0.78);margin-bottom:28px;font-weight:500;text-align:center}
+
+  .display-box{
+    width:420px;height:420px;max-width:82%;flex:0 0 auto;background:#fff;border-radius:28px;
+    display:flex;align-items:center;justify-content:center;color:#1f2937;
+    font-size:84px;font-weight:800;letter-spacing:6px;font-variant-numeric:tabular-nums;padding:12px;
+    box-shadow:0 40px 90px rgba(0,0,0,0.50), 0 0 0 6px rgba(255,255,255,0.06), 0 0 0 12px rgba(255,200,80,0.22);
+  }
+  .display-box canvas{width:380px!important;height:380px!important;border-radius:14px}
+
+  .time{
+    margin-top:28px;font-size:27px;font-weight:700;color:var(--gold-1);
+    background:rgba(255,200,80,0.12);border:1px solid rgba(255,200,80,0.28);
+    padding:12px 30px;border-radius:999px;box-shadow:0 10px 26px rgba(0,0,0,0.30);
+    display:flex;align-items:center;gap:10px;
+  }
+  .time::before{content:"⏱";font-size:24px}
+
+  .right{width:58%;display:flex;flex-direction:column;gap:28px;min-height:0}
+  .box{
+    flex:1;min-height:0;background:var(--glass);border:1px solid var(--glass-brd);border-radius:30px;
+    padding:28px 34px;backdrop-filter:blur(18px);box-shadow:0 30px 70px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.08);
+    display:flex;flex-direction:column;animation:rise .55s ease both;
+  }
+  .box h2{font-size:36px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+  .box h2::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0.18),transparent)}
+  .green{color:var(--green)}
+  .red{color:var(--red)}
+
+  .names{flex:1;overflow-y:auto;display:flex;flex-wrap:wrap;align-content:flex-start;gap:12px;padding-right:6px}
+  .names::-webkit-scrollbar{width:8px}
+  .names::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:8px}
+  .tag{
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+    padding:12px 18px;border-radius:14px;font-size:24px;line-height:1;color:#eef1ff;
+    animation:pop .28s ease both;transition:transform .18s ease, background .18s ease;
+  }
+  .tag:hover{transform:translateY(-3px);background:rgba(255,255,255,0.14)}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+  .btn-group{position:fixed;bottom:36px;right:40px;z-index:5;display:flex;gap:18px}
+  .end-btn,.close-btn{border:none;border-radius:16px;font-size:22px;font-weight:700;cursor:pointer;padding:18px 38px;color:#fff;
+    transition:transform .15s ease, filter .15s ease, box-shadow .15s ease}
+  .end-btn{background:linear-gradient(135deg,#FFB020,#FF7A00);box-shadow:0 14px 34px rgba(255,122,0,0.42)}
+  .close-btn{background:linear-gradient(135deg,#FF5C7A,#E11D48);box-shadow:0 14px 34px rgba(225,29,72,0.42)}
+  .end-btn:hover,.close-btn:hover{transform:translateY(-3px);filter:brightness(1.06)}
+  .end-btn:active,.close-btn:active{transform:translateY(0) scale(.98)}
+
+  @media (max-height:780px){
+    .subject-title{font-size:46px}.title-text{font-size:26px}
+    .display-box{width:340px;height:340px}.display-box canvas{width:300px!important;height:300px!important}
+    .empty{font-size:50px}.empty .ico{font-size:64px}
+    .box h2{font-size:30px;margin-bottom:14px}.tag{font-size:20px;padding:10px 14px}
+    .time{font-size:22px;margin-top:18px}.topbar{padding:16px 30px}
+  }
+  </style>
 </head>
 <body>
 
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">📚</span>
+    <div>智慧课堂 · 签到大屏<small>SMART CLASS SIGN-IN</small></div>
+  </div>
+  <div class="live"><span class="pulse"></span> 实时同步中</div>
+</header>
+
 <div class="wrap">
-  <div class="left">
-    <div class="empty" id="emptyTip">暂无签到</div>
+  <section class="left">
+    <div class="empty" id="emptyTip">
+      <span class="ico">📡</span>
+      <span>暂无签到</span>
+    </div>
     <div class="subject-title" id="subjectTitle"></div>
     <div class="title-text" id="titleText"></div>
     <div class="display-box" id="displayBox"></div>
     <div class="time" id="time"></div>
-  </div>
-  <div class="right">
+  </section>
+
+  <section class="right">
     <div class="box">
       <h2 class="green">✅ 已签到</h2>
       <div class="names" id="signed"></div>
@@ -263,12 +370,12 @@ function getBigScreenHtml() {
       <h2 class="red">❌ 未签到</h2>
       <div class="names" id="unsigned"></div>
     </div>
-  </div>
+  </section>
 </div>
 
 <div class="btn-group">
-  <button class="end-btn" id="endBtn">结束</button>
-  <button class="close-btn" id="closeBtn">关闭</button>
+  <button class="end-btn" id="endBtn">结束签到</button>
+  <button class="close-btn" id="closeBtn">关闭大屏</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
