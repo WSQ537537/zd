@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'config.dart';
 import 'utils/toast.dart';
 
@@ -253,8 +254,30 @@ class _MinePanelState extends State<MinePanel> {
             showDeclare = true;
           });
         }),
+        // 🔥 新增：官网入口（带图标）
+        ListTile(
+          leading: const Icon(Icons.language_outlined),
+          title: const Text("官网"),
+          onTap: () {
+            _resetAutoCloseTimer(); // 🔥 重置计时器
+            closeAll();
+            _openWebsite();
+          },
+        ),
       ],
     );
+  }
+
+  // 🔥 新增：打开官网
+  void _openWebsite() async {
+    final url = Uri.parse('https://wsq537537.github.io/zd/index');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ToastUtil.show(context, "无法打开官网");
+      }
+    }
   }
 
   Widget _buildAccountModal() {
