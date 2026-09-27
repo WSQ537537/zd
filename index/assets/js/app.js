@@ -2194,7 +2194,7 @@
                   Math.max(0, r.left).toFixed(1) + 'px ' +
         'round ' + rad.toFixed(1) + 'px)';
 
-      var band = Math.max(56, Math.min(r.width * 0.62, 190));
+      var band = Math.max(64, Math.min(r.width * 0.78, 240));
       fxLayer.style.setProperty('--fx-band', band.toFixed(1) + 'px');
       fxLayer.style.setProperty('--fx-x0', (r.left - band * 1.08).toFixed(1) + 'px');
       fxLayer.style.setProperty('--fx-x1', (r.right + band * 0.16).toFixed(1) + 'px');
@@ -2203,8 +2203,15 @@
       void fxLayer.offsetWidth;        /* 强制重排，连点也能重放动画 */
       fxLayer.classList.add('is-run');
 
+      /* 收尾时长跟着实际动画走（改 CSS 时长 / 关动画偏好都不会脱节） */
+      var dur = 0.58;
+      try {
+        var raw = (getComputedStyle(fxLayer, '::after').animationDuration || '').split(',')[0].trim();
+        var v = parseFloat(raw);
+        if (v > 0) dur = /ms$/.test(raw) ? v / 1000 : v;
+      } catch (err) { /* 取不到就用默认值 */ }
       clearTimeout(fxTimer);
-      fxTimer = setTimeout(function () { fxLayer.classList.remove('is-run'); }, 700);
+      fxTimer = setTimeout(function () { fxLayer.classList.remove('is-run'); }, dur * 1000 + 80);
     }
 
     document.addEventListener('pointerdown', function (e) {
@@ -2217,9 +2224,47 @@
     }, true);
   }
 
+  /* ---------------------------------------------------------------
+     顶栏实际高度 → --nav-h
+     首屏内容用这个变量避让固定顶栏。但顶栏实际高度会随「刘海安全区 /
+     系统字号 / 文字是否换行 / 浏览器工具栏」变化，硬编码 56px 会与实际
+     渲染脱节 —— 表现就是顶栏"变高"把首屏内容压住。
+     用 ResizeObserver 盯住顶栏实测高度并回写，任何环境下都严格对齐。
+  --------------------------------------------------------------- */
+  function syncNavHeight() {
+    var mtop = document.getElementById('mtop');
+    if (!mtop) return;
+    var root = document.documentElement;
+
+    function sync() {
+      /* 桌面端顶栏 display:none，还原 CSS 里的默认值 */
+      if (getComputedStyle(mtop).display === 'none') {
+        root.style.removeProperty('--nav-h');
+        return;
+      }
+      var h = Math.round(mtop.getBoundingClientRect().height);
+      if (h > 0) root.style.setProperty('--nav-h', h + 'px');
+    }
+
+    if (window.ResizeObserver) {
+      /* ⚠️ 必须持有 observer 引用：写成 new ResizeObserver(sync).observe(x)
+         时对象无人引用，可能被 GC 回收，回调静默失效（顶栏变高了但变量不更新）。 */
+      var ro = new ResizeObserver(sync);
+      ro.observe(mtop);
+      window.__zdxtNavRO = ro;
+    }
+    window.addEventListener('resize', sync, { passive: true });
+    window.addEventListener('orientationchange', sync, { passive: true });
+    window.addEventListener('load', sync);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+    sync();
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', syncNavHeight);
   } else {
     init();
+    syncNavHeight();
   }
 })();

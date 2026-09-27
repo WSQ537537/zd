@@ -375,7 +375,15 @@ main, .foot-wrap { position: relative; z-index: 1; }
   flex: none;
 }
 .mtop__tx { flex: 1; min-width: 0; line-height: 1.25; }
-.mtop__tx b { display: block; font-size: 14.5px; font-weight: 800; }
+.mtop__tx b {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 800;
+  /* 系统字号放大时不换行，避免顶栏被撑成两行高 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .mtop__tx span {
   display: block;
   font-size: 10.5px;
@@ -480,10 +488,11 @@ main, .foot-wrap { position: relative; z-index: 1; }
   width: var(--fx-band, 120px);
   background: linear-gradient(100deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(146, 202, 255, .30) 32%,
-    rgba(255, 255, 255, .65) 52%,
-    rgba(146, 202, 255, .26) 72%,
+    rgba(150, 206, 255, .42) 32%,
+    rgba(255, 255, 255, .82) 51%,
+    rgba(150, 206, 255, .36) 70%,
     rgba(255, 255, 255, 0) 100%);
+  filter: blur(1px);
   opacity: 0;
   transform: translateX(var(--fx-x0, -200px)) skewX(-14deg);
 }
@@ -2701,6 +2710,13 @@ main, .foot-wrap { position: relative; z-index: 1; }
     display: flex;
     align-items: flex-end;
     overflow: hidden;
+    /* ★ 顶栏避让：内容靠 align-items:flex-end 贴底，位置只由 62vh 决定。
+       视口一旦偏矮（浏览器工具栏占位、系统字号放大、vh 取值差异），
+       内容顶部就会顶进固定顶栏下方被遮住。
+       这里在「内容区」顶部固定留出 顶栏高度 + 18px 的空白带 ——
+       贴底对齐下该留白不会被抵消，任何视口/字号首屏内容都不会被压。 */
+    padding-top: calc(var(--nav-h) + 18px);
+    box-sizing: border-box;
   }
   .herom__cover {
     position: absolute;
