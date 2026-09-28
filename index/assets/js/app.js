@@ -1119,7 +1119,6 @@
           view =
             '<div class="al-web">' +
               '<div class="al-web__hd">📚 课程资源共享站</div>' +
-              '<div class="al-web__url">http://cydc.dpdns.org</div>' +
               '<div class="al-web__sec">最新上传</div>' +
               [['八年级数学 · 二次函数专题.pdf', 'PDF · 2.4 MB'],
                ['语文古诗文背诵音频合集.zip', 'ZIP · 18.6 MB'],
@@ -1791,18 +1790,98 @@
      站点交互
      ============================================================ */
   function bindSite() {
-    /* 导航吸顶 + 高亮 */
+    /* ============================================================
+       统一滚动调度器
+       页面上所有"随滚动变化"的联动都注册到这里，由 rAF 合并成
+       每帧最多执行一次，并且严格「先批量读、后批量写」：
+         - 消除同一个滚动事件里多处 getBoundingClientRect() 造成的
+           强制同步布局（layout thrashing）—— 这是卡顿的主因
+         - 一帧内触发多次 scroll 只跑一次，避免闪烁与多余重排
+       区块位置在 measure() 时一次性缓存，滚动帧内不再测量 DOM
+       ============================================================ */
+    var tasks = [];
+    var queued = false;
+    var scrollY = 0;
+    var docBottom = 0;
+
+    function runFrame() {
+      queued = false;
+      scrollY = window.scrollY || window.pageYOffset || 0;
+      docBottom = Math.max(
+        document.documentElement.scrollHeight,
+        document.body ? document.body.scrollHeight : 0
+      ) - window.innerHeight;
+      for (var i = 0; i < tasks.length; i++) {
+        try { tasks[i](scrollY); } catch (e) { /* 单个联动出错不影响其他 */ }
+      }
+    }
+    function queueScroll() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(runFrame);
+    }
+    window.addEventListener('scroll', queueScroll, { passive: true });
+
+    /* 滚动期间给 <html> 打标记：CSS 用它暂停全屏背景光斑的漂移动画，
+       把性能让给滚动本身；停止 320ms 后自动恢复。 */
+    var idleTimer = null;
+    var scrolling = false;
+    tasks.push(function () {
+      if (!scrolling) {
+        scrolling = true;
+        document.documentElement.classList.add('is-scrolling');
+      }
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(function () {
+        scrolling = false;
+        document.documentElement.classList.remove('is-scrolling');
+      }, 320);
+    });
+
+    /* 区块位置缓存：只在「非滚动帧」重测，滚动时零测量 */
+    var secTops = [];
+    var measureCbs = [];
+    function measure() {
+      var y = window.scrollY || window.pageYOffset || 0;
+      var list = {};
+      ['caps', 'matrix', 'roles', 'demo', 'tech', 'download', 'disclaimer', 'ipad'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) list[id] = el.getBoundingClientRect().top + y;
+      });
+      secTops = list;
+      for (var i = 0; i < measureCbs.length; i++) {
+        try { measureCbs[i](); } catch (e) { /* 同上 */ }
+      }
+      queueScroll();
+    }
+    function onMeasure(fn) { measureCbs.push(fn); }
+
+    var measureTimer = null;
+    function scheduleMeasure() {
+      clearTimeout(measureTimer);
+      measureTimer = setTimeout(measure, 120);   /* 防抖：地址栏收起会连发 resize */
+    }
+    window.addEventListener('resize', scheduleMeasure, { passive: true });
+    window.addEventListener('orientationchange', function () { setTimeout(measure, 240); }, { passive: true });
+    window.addEventListener('load', measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    measure();
+
+    /* 导航吸顶：带滞回（进入 18px / 退出 8px），避免阈值附近反复横跳 */
     var nav = $('#nav');
     if (nav) {
-      var onScroll = function () { nav.classList.toggle('is-stuck', window.scrollY > 18); };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
+      var stuck = false;
+      tasks.push(function (y) {
+        var next = stuck ? y > 8 : y > 18;
+        if (next !== stuck) { stuck = next; nav.classList.toggle('is-stuck', next); }
+      });
     }
 
-    /* 桌面导航活动指示 */
+    /* 桌面导航活动指示
+       secs 顺序必须与导航链接一致（#ipad 是浮层，不参与滚动联动） */
     var links = $('#navLinks');
     var ink = $('#navInk');
-    var secs = ['caps', 'matrix', 'roles', 'demo', 'tech', 'disclaimer'];
+    var secs = ['caps', 'matrix', 'roles', 'demo', 'tech', 'download', 'disclaimer'];
     if (links && ink) {
       function moveInk(a) {
         if (!a) { ink.classList.remove('on'); return; }
@@ -1811,27 +1890,34 @@
         ink.style.width = a.offsetWidth + 'px';
       }
       links.addEventListener('mouseleave', function () {
-        var act = links.querySelector('a.is-on');
-        moveInk(act);
+        moveInk(links.querySelector('a.is-on'));
       });
       $$('a', links).forEach(function (a) {
         a.addEventListener('mouseenter', function () { moveInk(a); });
       });
-      window.addEventListener('scroll', function () {
+
+      var curSec = null;
+      var inkKey = null;
+      tasks.push(function (y) {
         var cur = null;
-        secs.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (!el) return;
-          var top = el.getBoundingClientRect().top;
-          if (top < 200) cur = id;
-        });
-        $$('a', links).forEach(function (a) {
-          var on = cur && a.getAttribute('href') === '#' + cur;
-          a.classList.toggle('is-on', !!on);
-        });
-        if (window.scrollY < 300) moveInk(null);
-        else moveInk(links.querySelector('a.is-on'));
-      }, { passive: true });
+        for (var i = 0; i < secs.length; i++) {
+          var t = secTops[secs[i]];
+          if (t != null && y >= t - 200) cur = secs[i];
+        }
+        /* 只在跨区时改 class */
+        if (cur !== curSec) {
+          curSec = cur;
+          $$('a', links).forEach(function (a) {
+            a.classList.toggle('is-on', !!cur && a.getAttribute('href') === '#' + cur);
+          });
+        }
+        /* 指示条只在目标变化时写样式，避免每帧强制重排 */
+        var key = y < 300 ? '' : (cur || '');
+        if (key !== inkKey) {
+          inkKey = key;
+          moveInk(key ? links.querySelector('a.is-on') : null);
+        }
+      });
     }
 
     /* 汉堡菜单 */
@@ -1885,12 +1971,9 @@
         clearTimeout(jumpTimer);
         jumpTimer = setTimeout(function () { tabJumping = false; }, 180);
       }
-      function bottomY() {
-        return Math.max(
-          document.documentElement.scrollHeight,
-          document.body ? document.body.scrollHeight : 0
-        ) - window.innerHeight;
-      }
+      /* 页面底部位置由调度器每帧算好并缓存，这里直接读，
+         避免滚动帧内反复读 scrollHeight 触发强制同步布局 */
+      function bottomY() { return docBottom; }
 
       $$('.mtab__b', mtab).forEach(function (b) {
         b.addEventListener('click', function () {
@@ -1906,14 +1989,13 @@
         });
       });
 
-      window.addEventListener('scroll', function () {
-        var y = window.scrollY;
-        var ids = ['caps', 'matrix', 'roles', 'demo', 'tech', 'download'];
+      var tabIds = ['caps', 'matrix', 'roles', 'demo', 'tech', 'download'];
+      tasks.push(function (y) {
         var cur = 'caps';
-        ids.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el && el.getBoundingClientRect().top < 240) cur = id;
-        });
+        for (var i = 0; i < tabIds.length; i++) {
+          var t = secTops[tabIds[i]];
+          if (t != null && y >= t - 240) cur = tabIds[i];
+        }
         var b = mtab.querySelector('.mtab__b[data-to="' + cur + '"]');
         if (b && !b.classList.contains('is-on')) setTab(cur);
 
@@ -1942,7 +2024,7 @@
         /* 底栏常驻：滚动停止后自动滑回（顶条维持原有收起逻辑） */
         clearTimeout(tabTimer);
         tabTimer = setTimeout(showTab, 260);
-      }, { passive: true });
+      });
 
       /* 松手 / 惯性结束：底栏立即滑回，避免移动端停在隐藏态 */
       function settleTab() {
@@ -1959,13 +2041,11 @@
           tabJumping = false;     /* 跳转滚动结束，解除标记 */
         }, { passive: true });
       }
-      /* 视口变化后圆卡要重新对位（横竖屏切换、地址栏收起等） */
-      window.addEventListener('resize', function () {
+      /* 视口变化后圆卡要重新对位（横竖屏切换、地址栏收起等）。
+         统一挂到 measure：resize 统一防抖 120ms，避免地址栏收起时连发重排 */
+      onMeasure(function () {
         moveTabInk(mtab.querySelector('.mtab__b.is-on'));
-      }, { passive: true });
-      window.addEventListener('orientationchange', function () {
-        setTimeout(function () { moveTabInk(mtab.querySelector('.mtab__b.is-on')); }, 220);
-      }, { passive: true });
+      });
     }
 
     /* 全屏体验抽屉
