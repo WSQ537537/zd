@@ -175,7 +175,7 @@
 
   /* ==================== 站点：三端协同 ==================== */
   function renderRoles() {
-    var av = { admin: '管', student: '学', parent: '家' };
+    var av = { admin: '管', student: '学', parent: '家', ipad: '平' };
     $('#rolesGrid').innerHTML = D.roles.map(function (r) {
       return '<article class="rcard rcard--' + r.role + '">' +
         '<div class="rcard__top">' +
@@ -416,7 +416,7 @@
       if (sub === 1) {
         return head + subbar +
           '<div class="al-group-title">系统通知</div>' +
-          notice('系统', 'grey', '新版本 V1.5.9 已发布', '09-25', '本次更新优化了通知到达率与视频播放稳定性，建议全员升级。') +
+          notice('系统', 'grey', '新版本 V1.6.5 已发布', '09-25', '本次更新新增积分商城、灵动岛学习计时，平板端全面适配奶油风主题，建议全员升级。') +
           '<div class="al-group-title">学习通知</div>' +
           notice('学习', 'blue', '本周学习任务已更新', '09:15', '本周数学新增 3 个视频任务，完成后学习时长将同步到教师端。');
       }
@@ -527,7 +527,7 @@
           '<div class="al-notcard">' +
             noticeSec('系统通知', '2', [
               { t: '期中测评安排', time: '14:02', u: true },
-              { t: '新版本 V1.5.9 已发布', time: '09-25', u: false }
+              { t: '新版本 V1.6.5 已发布', time: '09-25', u: false }
             ]) +
             '<div class="al-notdiv"></div>' +
             noticeSec('学习通知', '1', [
@@ -538,6 +538,7 @@
       function () {
         return sec('工具', [
             { ic: '📝', lb: '签到', act: 'open-sub', arg: 'stusign' },
+            { ic: '💰', lb: '我的积分', act: 'todo', label: '积分中心' },
             { ic: '📱', lb: '考试登录' }
           ]) +
           sec('常规', [
@@ -573,9 +574,10 @@
         return adminNoticeBody();
       },
       function () {
-        return sec('管理', [
+        return sec('工具', [
             { ic: '📚', lb: '课程资源', act: 'open-sub', arg: 'browser' },
             { ic: '👥', lb: '用户管理', act: 'open-sub', arg: 'users' },
+            { ic: '💰', lb: '积分管理' },
             { ic: '🛠', lb: '更新管理' },
             { ic: '🖼', lb: '设置背景' },
             { ic: '✅', lb: '签到管理', act: 'open-sub', arg: 'sign' },
@@ -670,7 +672,7 @@
           '<div class="al-notcard">' +
             noticeSec('系统通知', '2', [
               { t: '期中测评安排', time: '14:02', u: true },
-              { t: '新版本 V1.5.9 已发布', time: '09-25', u: false }
+              { t: '新版本 V1.6.5 已发布', time: '09-25', u: false }
             ]) +
             '<div class="al-notdiv"></div>' +
             noticeSec('学习通知', '1', [
@@ -680,6 +682,7 @@
       },
       function () {
         return '<div class="al-seccenter">' +
+            '<button class="al-seccard" data-act="todo" data-label="孩子积分"><span class="al-seccard__ic">💰</span><span class="al-seccard__lb">孩子积分</span></button>' +
             '<button class="al-seccard" data-act="open-sub" data-arg="settings" data-label="设置"><span class="al-seccard__ic">⚙️</span><span class="al-seccard__lb">设置</span></button>' +
             '<button class="al-seccard" data-act="todo" data-label="检查更新"><span class="al-seccard__ic">🔄</span><span class="al-seccard__lb">检查更新</span></button>' +
             '<button class="al-seccard" data-act="todo" data-label="官网"><span class="al-seccard__ic">🌐</span><span class="al-seccard__lb">官网</span></button>' +
@@ -1467,7 +1470,7 @@
         setTimeout(function () {
           st.loggedIn = true; st.tab = 0;
           renderBody(); go('app');
-          toast('登录成功 · 已进入' + { admin: '管理端', student: '学生端', parent: '家长端' }[st.role]);
+          toast('登录成功 · 已进入' + { admin: '管理端', student: '学生端', parent: '家长端' }[st.role] || st.role);
         }, 720);
         return;
       }
@@ -1712,13 +1715,14 @@
         ['投屏讲解', 'WebSocket 遥控大屏，切题、显隐答案与统计', { role: 'admin', tab: 3, sub: 'explain' }],
         ['数据导出', '多维筛选导出 Excel，附四张统计图', { role: 'admin', tab: 3, sub: 'export' }],
         ['签到点名', '二维码或口令，实时出勤率', { role: 'admin', tab: 3, sub: 'sign' }],
+        ['积分管理', '学生积分、规则配置、商城订单、反馈处理', { role: 'admin', label: '积分管理' }],
         ['用户管理', '三角色建号，申诉待处理置顶', { role: 'admin', tab: 3, sub: 'users' }],
         ['资源宝库', '内置浏览器：课程资源站 + 夸克搜索', { role: 'admin', tab: 3, sub: 'browser' }]
       ]
     },
     student: {
       title: '学生端 · 一个学生的一天',
-      desc: '试卷、AI、课程、签到全在一部手机里 —— 点条目，手机会跟着跳。',
+      desc: '试卷、AI、课程、积分、签到全在一部手机里 —— 点条目，手机会跟着跳。',
       list: [
         ['试卷中心', '未开始 / 答题已开放 / 已结束三色状态', { role: 'student', tab: 0 }],
         ['在线作答', '四大题型、总计时 / 每题计时、如实交卷', { role: 'student', tab: 0, view: 'exam' }],
@@ -1726,6 +1730,7 @@
         ['AI 智能答疑', '流式回答带公式，还能直接生成图片', { role: 'student', view: 'ai' }],
         ['学习中心', '四科切换、内联播放 + 时长上报', { role: 'student', tab: 1 }],
         ['资源宝库', '课程资源站 / 夸克搜索双标签浏览器', { role: 'student', tab: 1, sub: 'browser' }],
+        ['积分中心', '余额、商城兑换、订单记录、反馈入口', { role: 'student', tab: 3, label: '我的积分' }],
         ['通知中心', '系统通知 / 学习通知两个分区', { role: 'student', tab: 2 }],
         ['签到', '现场扫码或口令，按科目查记录', { role: 'student', tab: 3, sub: 'stusign' }],
         ['设置', '账户信息、修改密码、用户声明', { role: 'student', tab: 3, sub: 'settings' }]
