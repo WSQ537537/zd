@@ -955,7 +955,7 @@ main, .foot-wrap { position: relative; z-index: 1; }
 
 .role-seg {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
   margin-bottom: 38px;
   padding: 5px;
@@ -968,6 +968,7 @@ main, .foot-wrap { position: relative; z-index: 1; }
   margin-right: auto;
   overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 .role-seg::-webkit-scrollbar { display: none; }
 .role-seg button {

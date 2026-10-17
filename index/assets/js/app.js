@@ -127,18 +127,24 @@
 
   function renderMatrixBody() {
     var m = curRole();
+    // 🔥 防御：个别角色可能只配了 lead/kw 而没有 groups（如已下线的 iPad 项），
+    //    直接读 m.groups.length 会整段崩溃，故兜底为空数组。
+    var groups = m.groups || [];
+    var sum = groups.reduce(function (a, g) { return a + g.items.length; }, 0);
 
     /* 桌面：多列清单 */
     $('#mxDesk').innerHTML =
       '<div class="mx-g" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(24,144,255,.08),rgba(124,92,255,.06));border-color:rgba(24,144,255,.24)">' +
         '<div class="mx-g__top" style="border-bottom:0">' +
-          '<span class="mx-g__n" style="width:auto;padding:0 10px;height:26px">' + m.who + '</span>' +
-          '<h3 style="font-size:19px">' + m.name + ' · ' + m.groups.length + ' 大项 / ' +
-            m.groups.reduce(function (a, g) { return a + g.items.length; }, 0) + ' 个功能点</h3>' +
+          '<span class="mx-g__n" style="width:auto;padding:0 10px;height:26px">' + (m.who || '') + '</span>' +
+          '<h3 style="font-size:19px">' + m.name + ' · ' + groups.length + ' 大项 / ' +
+            sum + ' 个功能点</h3>' +
         '</div>' +
-        '<p style="font-size:13.5px;line-height:1.85;color:var(--ink-2)">' + m.desc + '</p>' +
+        '<p style="font-size:13.5px;line-height:1.85;color:var(--ink-2)">' + (m.desc || m.lead || '') + '</p>' +
+        (groups.length === 0 && m.kw ? '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">' +
+          m.kw.map(function (k) { return '<span style="padding:6px 12px;border-radius:999px;background:var(--cream-fill);border:1px solid var(--cream-border);font-size:12.5px;color:var(--cream-text-2)">' + k + '</span>'; }).join('') + '</div>' : '') +
       '</div>' +
-      m.groups.map(function (g, i) {
+      groups.map(function (g, i) {
         return '<div class="mx-g">' +
           '<div class="mx-g__top">' +
             '<span class="mx-g__n">' + (i + 1) + '</span>' +
@@ -149,7 +155,7 @@
       }).join('');
 
     /* 移动：手风琴 */
-    $('#mxMob').innerHTML = m.groups.map(function (g, i) {
+    $('#mxMob').innerHTML = groups.map(function (g, i) {
       return '<div class="acc' + (i === 0 ? ' is-open' : '') + '">' +
         '<button class="acc__btn" data-acc>' +
           '<span class="acc__n">' + (i + 1) + '</span>' +
