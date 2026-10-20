@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>智答星途 · 智能问答 星途相伴</title>
-<meta name="description" content="智答星途是一套覆盖管理端、学生端、家长端的智慧教学平台：AI 答疑与智能出卷、在线考试与自动判分、投屏讲解、学习时长追踪、数据导出与图表分析、秒级通知推送。">
+<meta name="description" content="智答星途是一套覆盖管理端、学生端、家长端的智慧教学平台：AI 答疑与智能出卷、在线考试与云端自动批改、错题重做闭环、投屏讲解、学习时长追踪、数据导出与图表分析、秒级通知推送。">
 <meta name="theme-color" content="#04060F">
 <meta property="og:title" content="智答星途 · 智能问答 星途相伴">
 <meta property="og:description" content="AI 驱动的智慧教学平台 · 管理端 / 学生端 / 家长端 三端协同">
@@ -28,7 +28,7 @@
   <div class="wrap nav__in">
     <a class="brand" href="#top">
       <img class="brand__mark" src="assets/img/cover.jpg" alt="智答星途" width="38" height="38">
-      <span class="brand__tx"><span class="ink">智答星途</span><em>V1.6.5</em></span>
+      <span class="brand__tx"><span class="ink">智答星途</span><em>V1.6.7</em></span>
     </a>
 
     <nav class="nav__links" id="navLinks">
@@ -78,12 +78,14 @@
     <!-- 桌面：左文案 + 右装置 -->
     <div class="wrap hero__desk">
       <div class="hero__copy">
-        <span class="pill"><i class="dot"></i> V1.6.5 · Android 正式版 · 免费下载</span>
+        <span class="pill"><i class="dot"></i> V1.6.7 · Android 正式版 · 免费下载</span>
         <h1 class="hero__h1 ink"><span class="ik">智</span><span class="ik">答</span><span class="ik ik-g">星</span><span class="ik ik-g">途</span></h1>
         <p class="hero__slogan">智能问答 · 星途相伴</p>
         <p class="hero__desc">
           一套贯通 <b>管理端 · 学生端 · 家长端</b> 的智慧教学平台。
-          AI 答疑与智能出卷、在线答题与自动判分、投屏讲解、学习时长追踪、数据导出与图表分析、秒级通知推送、应用内置灵动岛提醒、积分商城 ——
+          AI 答疑走 Qwen3.5-4B 推理模型（深度思考/视觉识图），出图走 Agnes Image 2.5 Flash（文生图/图生图）；
+          云端自动批改主观题并智能生成错题重做卷，形成「考→批→重做」闭环；
+          投屏讲解、学习时长追踪、数据导出与图表分析、秒级通知推送、应用内置灵动岛提醒、积分商城 ——
           从命题、作答到讲评复盘，全链路一次打通。
         </p>
         <div class="hero__cta">
@@ -138,7 +140,7 @@
       <img class="herom__cover" src="assets/img/cover.jpg" alt="智答星途 封面">
       <div class="herom__veil"></div>
       <div class="herom__in">
-        <span class="pill pill--sm"><i class="dot"></i> V1.6.5 · Android</span>
+        <span class="pill pill--sm"><i class="dot"></i> V1.6.7 · Android</span>
         <h1 class="herom__h1 ink"><span class="ik">智</span><span class="ik">答</span><span class="ik">星</span><span class="ik">途</span></h1>
         <p class="herom__slogan">智能问答 · 星途相伴</p>
         <p class="herom__desc">管理端 · 学生端 · 家长端<br>一套系统打通教学全链路</p>
@@ -172,7 +174,7 @@
       <header class="sec-head reveal">
         <span class="sec-tag">核心能力</span>
         <h2>把教与学，<span class="ink">交给一套系统</span></h2>
-        <p>从命题出卷、学生作答，到投屏讲评、数据回流 —— 每个环节都内置了 AI 能力。</p>
+        <p>从命题出卷、学生作答，到云端 AI 批改、错题重做闭环 —— 每个环节都内置了 AI 能力。</p>
       </header>
     </div>
 
@@ -273,7 +275,7 @@
           <div class="dl__info">
             <span>文件名 <b>zdxt.apk</b></span>
             <span>大小 <b>37.4 MB</b></span>
-            <span>版本 <b>V1.6.5</b></span>
+            <span>版本 <b>V1.6.7</b></span>
             <span>系统 <b>Android 9.0+</b></span>
           </div>
         </div>
@@ -377,7 +379,7 @@
     </nav>
 
     <div class="foot__copy">
-      <span>© 2026 智答星途 · ZdxtApp V1.6.5</span>
+      <span>© 2026 智答星途 · ZdxtApp V1.6.7</span>
       <span>本站为应用介绍页，界面演示基于真实客户端结构手绘还原，仅供预览</span>
     </div>
   </div>
@@ -580,7 +582,7 @@
         <div class="iai__copy">
           <span class="sec-tag">AI 解题助手</span>
           <h2>看不懂的题，<span class="ink">直接问</span></h2>
-          <p>接入智谱 <b>GLM-4-Flash</b>，以流式方式逐字返回解题过程，公式强制使用标准 LaTeX 输出，与客户端渲染器无缝衔接。</p>
+          <p>接入 <b>Qwen3.5-4B</b> 推理模型，支持深度思考（展示完整推理链）、视觉识图与工具调用，以流式方式逐字返回解题过程，公式强制使用标准 LaTeX 输出，与客户端渲染器无缝衔接。</p>
           <ul class="ichecks">
             <li>流式打字机效果，边算边显示</li>
             <li>每条消息可复制、可重新生成</li>

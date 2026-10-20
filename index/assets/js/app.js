@@ -224,7 +224,10 @@
       tab: 0,
       loggedIn: false,
       exam: { idx: 0, ans: {}, done: false, left: 0, timer: null },
-      ai: { booted:false, busy:false, mode:'text' },
+      examTab: 0, // 0=normal, 1=redo
+      examLoading: false,
+      examError: false,
+      ai: { booted:false, busy:false, mode:'text', think:false },
       detail: { role: 'student', ans: 0 },
       publish: { mode: 'ai', stage: 0 },
       explain: { i: 0, show: { ans: false, exp: false, sta: false } },
@@ -422,7 +425,7 @@
       if (sub === 1) {
         return head + subbar +
           '<div class="al-group-title">系统通知</div>' +
-          notice('系统', 'grey', '新版本 V1.6.5 已发布', '09-25', '本次更新新增积分商城、灵动岛学习计时，平板端全面适配奶油风主题，建议全员升级。') +
+          notice('系统', 'grey', '新版本 V1.6.7 已发布', '09-25', '本次更新新增积分商城、灵动岛学习计时，平板端全面适配奶油风主题，建议全员升级。') +
           '<div class="al-group-title">学习通知</div>' +
           notice('学习', 'blue', '本周学习任务已更新', '09:15', '本周数学新增 3 个视频任务，完成后学习时长将同步到教师端。');
       }
@@ -450,7 +453,7 @@
     }
     function examCard(o) {
       var map = { open: ['答题已开放', 'green'], no: ['未开始', 'grey'], end: ['已结束', 'red'] };
-      var b = map[o.status] || ['—', 'grey'];
+      var b = o.redo ? ['错题重做', 'violet'] : (map[o.status] || ['—', 'grey']);
       /* 默认按钮（学生端）；管理端可传 label / act / arg / primary / disabled 覆盖 */
       var label = o.label, act = o.act, arg = o.arg, primary = o.primary, disabled = o.disabled;
       if (label == null) {
@@ -495,10 +498,50 @@
 
     TABS.student = [
       function () {
-        return pttl('试卷中心') +
-          examCard({ status: 'open', name: '八年级数学 · 期中测评', subject: '数学', type: '正式考试', start: '09-27 14:00', end: '09-27 15:30', timing: '总计时：90 分钟' }) +
-          examCard({ status: 'no', name: '英语听力专项训练', subject: '英语', type: '专项训练', start: '09-29 09:00', end: '09-29 09:30', timing: '每题计时' }) +
-          examCard({ status: 'end', name: '物理 · 力学单元小测', subject: '物理', type: '单元小测', start: '09-20 10:00', end: '09-20 10:45', timing: '总计时：45 分钟' });
+        // Dual-tab structure: Normal exams | Redo (错题重做)
+        var tabsHtml = '<div class="al-tabs" style="margin-bottom:12px">' +
+          '<button class="al-tab' + (st.examTab === 0 ? ' is-on' : '') + '" data-act="exam-tab" data-idx="0">普通考试</button>' +
+          '<button class="al-tab' + (st.examTab === 1 ? ' is-on' : '') + '" data-act="exam-tab" data-idx="1">错题重做</button>' +
+        '</div>';
+
+        if (st.examLoading) {
+          // Skeleton loading state
+          return tabsHtml + '<div class="al-card al-skeleton" style="padding:20px;margin-bottom:10px">' +
+            '<div class="al-skeleton__line" style="width:70%"></div>' +
+            '<div class="al-skeleton__line" style="width:100%;margin-top:8px"></div>' +
+            '<div class="al-skeleton__line" style="width:60%;margin-top:8px"></div>' +
+          '</div>' +
+          '<div class="al-card al-skeleton" style="padding:20px;margin-bottom:10px">' +
+            '<div class="al-skeleton__line" style="width:75%"></div>' +
+            '<div class="al-skeleton__line" style="width:100%;margin-top:8px"></div>' +
+          '</div>' +
+          '<div class="al-card al-skeleton" style="padding:20px">' +
+            '<div class="al-skeleton__line" style="width:65%"></div>' +
+            '<div class="al-skeleton__line" style="width:90%;margin-top:8px"></div>' +
+          '</div>';
+        }
+        if (st.examError) {
+          // Error state with retry
+          return tabsHtml + '<div class="al-card" style="padding:20px;text-align:center">' +
+            '<div style="font-size:24px;margin-bottom:10px">⚠️</div>' +
+            '<div style="font-size:13px;color:#8A9AAB;margin-bottom:12px">加载失败，请下拉刷新重试</div>' +
+            '<button class="al-btn al-btn--primary" style="width:100%" data-act="exam-retry">重试</button>' +
+          '</div>';
+        }
+
+        var list = st.examTab === 0
+          ? [
+              { status: 'open', name: '八年级数学 · 期中测评', subject: '数学', type: '正式考试', start: '09-27 14:00', end: '09-27 15:30', timing: '总计时：90 分钟' },
+              { status: 'no', name: '英语听力专项训练', subject: '英语', type: '专项训练', start: '09-29 09:00', end: '09-29 09:30', timing: '每题计时' },
+              { status: 'end', name: '物理 · 力学单元小测', subject: '物理', type: '单元小测', start: '09-20 10:00', end: '09-20 10:45', timing: '总计时：45 分钟' }
+            ]
+          : [
+              { redo: true, name: '数学 · 期中测评 · 错题重做', subject: '数学', type: '错题重做', start: '09-27 15:30', end: '10-04 23:59', timing: '变式卷 · 5 题', label: '开始重做', act: 'start-redo', primary: true }
+            ];
+
+        return tabsHtml + list.map(function (o) {
+          return examCard(o);
+        }).join('');
       },
       function () {
         /* 真机：固定层为「学习中心 + 课程资源」标题行 → 四等分科目标签条 → 进度卡；下方为可滚动视频卡列表 */
@@ -533,11 +576,13 @@
           '<div class="al-notcard">' +
             noticeSec('系统通知', '2', [
               { t: '期中测评安排', time: '14:02', u: true },
-              { t: '新版本 V1.6.5 已发布', time: '09-25', u: false }
+              { t: '新版本 V1.6.7 已发布', time: '09-25', u: false }
             ]) +
             '<div class="al-notdiv"></div>' +
-            noticeSec('学习通知', '1', [
-              { t: '本周学习任务已更新', time: '09:15', u: true }
+            noticeSec('学习通知', '3', [
+              { t: '数学期中测评已批改完毕', time: '15:32', u: true },
+              { t: '你的错题重做卷已生成，点此开始重做', time: '15:33', u: true },
+              { t: '本周学习任务已更新', time: '09:15', u: false }
             ]) +
           '</div>';
       },
@@ -678,11 +723,13 @@
           '<div class="al-notcard">' +
             noticeSec('系统通知', '2', [
               { t: '期中测评安排', time: '14:02', u: true },
-              { t: '新版本 V1.6.5 已发布', time: '09-25', u: false }
+              { t: '新版本 V1.6.7 已发布', time: '09-25', u: false }
             ]) +
             '<div class="al-notdiv"></div>' +
-            noticeSec('学习通知', '1', [
-              { t: '本周学习任务已更新', time: '09:15', u: true }
+            noticeSec('学习通知', '3', [
+              { t: '数学期中测评已批改完毕', time: '15:32', u: true },
+              { t: '你的错题重做卷已生成，点此开始重做', time: '15:33', u: true },
+              { t: '本周学习任务已更新', time: '09:15', u: false }
             ]) +
           '</div>';
       },
@@ -1189,7 +1236,7 @@
           '先算判别式 Δ = b²−4ac：Δ &gt; 0 两个不等实根，Δ = 0 两个相等实根，Δ &lt; 0 无实根。'
       }
     ];
-    var WELCOME = '你好！我是智答星途专属AI助手，您有任何学习问题都可以问我哦！';
+    var WELCOME = '你好！我是智答星途 AI 助手（Qwen3.5-4B · 深度思考）。题目、图片、生成图都能聊，开启深度思考会展示完整推理过程～';
 
     /* ---------- 构建 ---------- */
     function build() {
@@ -1214,7 +1261,7 @@
         '<div class="view" data-view="ai"><div class="al-ai">' +
           '<div class="al-ai__bar">' +
             '<button class="al-ai__back" data-act="back-app">←</button>' +
-            '<div class="al-ai__title">AI 助手</div>' +
+            '<div class="al-ai__title">AI 助手<small>Qwen3.5-4B</small></div>' +
             '<button class="al-ai__menu" data-act="todo" data-label="清空记录 / 关于助手">☰</button>' +
           '</div>' +
           '<div class="al-chat" data-node="chat"></div>' +
@@ -1226,6 +1273,7 @@
           '<div class="al-ai__modes">' +
           '<button class="al-ai__mode is-on" data-act="ai-mode" data-mode="text">文本生成</button>' +
           '<button class="al-ai__mode" data-act="ai-mode" data-mode="image">图片生成</button>' +
+          '<button class="al-ai__mode al-ai__mode--think" data-act="ai-think">深度思考</button>' +
         '</div>' +
         '<div class="al-ai__cfg" data-node="aiCfg" style="display:none">' +
           '<button class="al-ai__cfgbtn is-on" data-act="ai-cfg" data-k="quality" data-v="standard">标准</button>' +
@@ -1239,7 +1287,7 @@
         '</div></div>' +
 
         '<div class="view" data-view="exam"><div class="al-exam">' +
-          '<div class="al-exam__bar">' +
+          '<div class="al-exam__bar" data-node="examBar">' +
             '<div class="al-exam__row">' +
               '<button class="al-ai__back" data-act="back-app">‹</button>' +
               '<b>数学</b>' +
@@ -1359,16 +1407,24 @@
           typeInto(b, '正在为你生成图片……', 26, function () {
             var box = document.createElement('div');
             box.className = 'al-genimg';
-            box.innerHTML = '<b>星途 · 光轨</b><span>CogView · 1024 × 1024 · 高清</span>';
+            box.innerHTML = '<b>星途 · 光轨</b><span>Agnes Image 2.5 Flash · 2K</span>';
             b.appendChild(box);
             node('chat').scrollTop = node('chat').scrollHeight;
             st.ai.busy = false;
           });
         } else {
-          typeInto(b, (r && r.html) || ('收到，我来看看「' + esc(q) + '」。<br><br>' +
+          var answer = (r && r.html) || ('收到，我来看看「' + esc(q) + '」。<br><br>' +
             '建议先圈出<b>已知条件</b>和<b>所求量</b>，再判断它属于哪一类模型 —— ' +
             '方程先试因式分解，函数先画草图定位关键点。<br><br>' +
-            '需要的话，我可以把完整步骤一步步写给你。'), 17, function () { st.ai.busy = false; });
+            '需要的话，我可以把完整步骤一步步写给你。');
+          if (st.ai.think) {
+            var rb = pushMsg('ai', '<span class="al-think"><b>💭 推理过程</b><br></span>');
+            typeInto(rb, '先明确题目类型与等量关系，再分步推导并验证每一步是否符合定义与公式，最后回代检验。', 16, function () {
+              typeInto(b, answer, 17, function () { st.ai.busy = false; });
+            });
+          } else {
+            typeInto(b, answer, 17, function () { st.ai.busy = false; });
+          }
         }
       }, 400);
     }
@@ -1388,6 +1444,17 @@
       var body = node('examBody'), foot = node('examFoot');
       if (!body) return;
       var E = st.exam;
+      var bar = node('examBar');
+      if (bar) {
+        var redo = E.redo;
+        bar.innerHTML =
+          '<div class="al-exam__row">' +
+            '<button class="al-ai__back" data-act="back-app">‹</button>' +
+            '<b>' + (redo ? '错题重做' : '数学') + '</b>' +
+            '<span class="al-timer" data-node="timer">' + (redo ? '重做 15:00' : '考试 15:00') + '</span>' +
+          '</div>' +
+          '<div class="al-exam__paper">' + (redo ? '数学 · 期中测评（变式重做）' : '八年级数学 · 期中测评') + '</div>';
+      }
 
       var i = E.idx, q = EXAM.qs[i];
       body.innerHTML =
@@ -1426,10 +1493,15 @@
     }
     function startExam() {
       var E = st.exam;
-      E.idx = 0; E.ans = {}; E.done = false; E.left = 15 * 60;
+      E.idx = 0; E.ans = {}; E.done = false; E.left = 15 * 60; E.redo = false;
       renderExam(); go('exam'); tick();
       clearInterval(E.timer);
       E.timer = setInterval(tick, 1000);
+    }
+    function startRedo() {
+      startExam();
+      st.exam.redo = true;
+      renderExam();
     }
 
     /* ---------- 二级页重绘 ---------- */
@@ -1584,6 +1656,12 @@
         if (ai) ai.placeholder = st.ai.mode === 'image' ? '描述想要生成的图片...' : '输入问题...';
         return;
       }
+      if (act === 'ai-think') {
+        st.ai.think = !st.ai.think;
+        t.classList.toggle('is-on', st.ai.think);
+        toast('深度思考：' + (st.ai.think ? '已开启（展示推理过程）' : '已关闭'));
+        return;
+      }
       if (act === 'ai-cfg') {
         var cbs = t.parentNode.querySelectorAll('.al-ai__cfgbtn');
         cbs.forEach(function (b) { b.classList.remove('is-on'); });
@@ -1592,6 +1670,29 @@
         return;
       }
       if (act === 'start-exam') { toast('正在进入考场…'); setTimeout(startExam, 400); return; }
+      if (act === 'start-redo') { toast('正在打开错题重做卷…'); setTimeout(startRedo, 400); return; }
+      if (act === 'exam-tab') {
+        st.examTab = parseInt(t.dataset.idx, 10);
+        // Simulate loading then show content
+        st.examLoading = true;
+        st.examError = false;
+        renderBody();
+        setTimeout(function() {
+          st.examLoading = false;
+          renderBody();
+        }, 600);
+        return;
+      }
+      if (act === 'exam-retry') {
+        st.examError = false;
+        st.examLoading = true;
+        renderBody();
+        setTimeout(function() {
+          st.examLoading = false;
+          renderBody();
+        }, 800);
+        return;
+      }
       if (act === 'pick') { st.exam.ans[st.exam.idx] = parseInt(t.dataset.opt, 10); renderExam(); return; }
       if (act === 'prev') { if (st.exam.idx > 0) { st.exam.idx--; renderExam(); } return; }
       if (act === 'next') { if (st.exam.idx < EXAM.qs.length - 1) { st.exam.idx++; renderExam(); } return; }
@@ -1715,6 +1816,7 @@
         ['出题管理', 'AI 出题或粘贴整卷导入，题型分数一次配齐', { role: 'admin', tab: 0, sub: 'publish' }],
         ['测试管理', '回到试卷列表并重新拉取最新试卷状态', { role: 'admin', tab: 0 }],
         ['试卷管理', '全部试卷、查看题目、设时间改分值', { role: 'admin', tab: 0 }],
+        ['AI 批改与重做', '及格线判分 + 错题重做开关配置', { role: 'admin', tab: 0 }],
         ['试卷统计', '逐学生 / 试卷 / 题型 / 单题四级下钻', { role: 'admin', tab: 0 }],
         ['学习管理', '任务时间范围、周计划与视频资源', { role: 'admin', tab: 1 }],
         ['通知发布', '系统 / 学习通知，图文视频混排', { role: 'admin', tab: 2 }],
@@ -1733,6 +1835,8 @@
         ['试卷中心', '未开始 / 答题已开放 / 已结束三色状态', { role: 'student', tab: 0 }],
         ['在线作答', '四大题型、总计时 / 每题计时、如实交卷', { role: 'student', tab: 0, view: 'exam' }],
         ['答卷详情', '逐题看解析，不会的题一键问 AI', { role: 'student', tab: 0, sub: 'detail' }],
+        ['AI 云端批改', '交卷即判分，未通过自动生成错题重做卷', { role: 'student', tab: 2 }],
+        ['错题重做', '未通过试卷的专属变式重做卷', { role: 'student', tab: 0 }],
         ['AI 智能答疑', '流式回答带公式，还能直接生成图片', { role: 'student', view: 'ai' }],
         ['学习中心', '四科切换、内联播放 + 时长上报', { role: 'student', tab: 1 }],
         ['资源宝库', '课程资源站 / 夸克搜索双标签浏览器', { role: 'student', tab: 1, sub: 'browser' }],
